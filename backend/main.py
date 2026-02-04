@@ -51,6 +51,7 @@ class ComplaintIn(BaseModel):
     text: str = Field(..., description="Raw grievance text from citizen.")
     area: Optional[str] = Field(None, description="Geographical area / ward / locality.")
     status: Optional[str] = Field(default="new", description="Initial status of the complaint.")
+    vulnerability: Optional[dict] = Field(default={}, description="Flags for Senior Citizen, BPL, Disability, etc.")
 
 
 class ComplaintOut(BaseModel):
@@ -96,24 +97,44 @@ def on_startup() -> None:
 
 @app.post("/complaint", response_model=ComplaintOut)
 def create_complaint(payload: ComplaintIn, db: Session = Depends(get_db)) -> ComplaintOut:
-    # 1) NLP engine
-    category, confidence = nlp_engine.predict_category(payload.text)
+    # 0) Pre-process / Translate Text
+    # This handles "Tanglish" (e.g., "thanni illai" -> "water illai")
+    # so keywords work in priority and scheme engines too.
+    processed_text = nlp_engine.translate_input(payload.text)
+
+    # 1) NLP engine (operates on translated text)
+    category, confidence = nlp_engine.predict_category(processed_text)
 
     # 2-4) Priority pipeline
     urgency, population_impact, vulnerability, priority_score = evaluate_complaint(
         db=db,
-        text=payload.text,
+        text=processed_text,  # Use processed text for keyword matching
         area=payload.area,
         category=category,
         confidence=confidence,
+        vulnerability_flags=payload.vulnerability,
     )
 
     # 5) Welfare scheme engine
-    scheme, scheme_reason = map_scheme(category=category, text=payload.text, area=payload.area)
+    # Map vulnerability flags to metadata for scheme engine
+    # Scheme engine expects: age, income_group, etc.
+    metadata = {}
+    if payload.vulnerability:
+        if payload.vulnerability.get("seniorCitizen"):
+            metadata["age"] = 70  # Proxy age > 60
+        if payload.vulnerability.get("lowIncome"):
+            metadata["income_group"] = "bpl"
+    
+    scheme, scheme_reason = map_scheme(
+        category=category, 
+        text=processed_text,  # Use processed text
+        area=payload.area,
+        metadata=metadata
+    )
 
-    # 6) Persist complaint
+    # 6) Persist complaint (Store ORIGINAL text for record, but processed/analyzed results)
     complaint = Complaint(
-        text=payload.text,
+        text=payload.text,  # Store original user input
         area=payload.area,
         category=category,
         confidence=confidence,
@@ -144,7 +165,7 @@ def create_complaint(payload: ComplaintIn, db: Session = Depends(get_db)) -> Com
         },
         "vulnerability": {
             "value": vulnerability,
-            "notes": "Higher if the text mentions vulnerable groups (children, elderly, disabled, etc.).",
+            "notes": "Higher if vulnerable groups are involved (Senior Citizen, BPL, Disability).",
         },
         "priority_score": {
             "value": priority_score,

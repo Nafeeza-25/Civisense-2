@@ -1,6 +1,6 @@
 import { ComplaintFormData, ComplaintStatus, ComplaintSubmissionResult, DashboardStats, Complaint } from '@/lib/types';
 
-export const API_BASE_URL = 'https://civisense-hackathon.onrender.com';
+export const API_BASE_URL = 'https://civisense-2-api.onrender.com';
 
 export const API_ENDPOINTS = {
   complaint: `${API_BASE_URL}/complaint`,
@@ -35,7 +35,8 @@ Consent Given: ${data.consent ? 'Yes' : 'No'}
       body: JSON.stringify({
         text: formattedText,
         area: data.area,
-        status: 'new'
+        status: 'new',
+        vulnerability: data.vulnerability
       }),
     });
 
@@ -136,5 +137,23 @@ Consent Given: ${data.consent ? 'Yes' : 'No'}
     }
 
     return response.json();
+  },
+
+  sendFeedback: async (complaintId: string, correctCategory?: string, correctScheme?: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/feedback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        complaint_id: parseInt(complaintId),
+        correct_category: correctCategory,
+        correct_scheme: correctScheme
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit feedback');
+    }
   }
 };

@@ -69,9 +69,10 @@ def compute_population_impact(db: Session, area: str | None, category: str | Non
     return 1.0
 
 
-def compute_vulnerability(text: str) -> float:
+def compute_vulnerability(text: str, flags: dict | None = None) -> float:
     """
-    Heuristic vulnerability score [0, 1] based on mention of groups.
+    Heuristic vulnerability score [0, 1] based on mention of groups
+    OR explicit flags provided by the frontend.
     """
     t = (text or "").lower()
     score = 0.3
@@ -91,6 +92,16 @@ def compute_vulnerability(text: str) -> float:
         score = 0.9
     elif any(k in t for k in medium_vulnerability):
         score = 0.7
+
+    # Explicit flags override/boost score
+    if flags:
+        if flags.get("seniorCitizen"):
+            score = max(score, 0.9)
+        if flags.get("disability"):
+            score = max(score, 0.9)
+        if flags.get("lowIncome"):
+            # BPL is high priority but slightly less than disability/senior
+            score = max(score, 0.8)
 
     return max(0.0, min(1.0, score))
 
@@ -126,6 +137,7 @@ def evaluate_complaint(
     area: str | None,
     category: str,
     confidence: float,
+    vulnerability_flags: dict | None = None,
 ) -> Tuple[float, float, float, float]:
     """
     Run the full priority pipeline and return:
@@ -133,7 +145,7 @@ def evaluate_complaint(
     """
     urgency = compute_urgency(text)
     population_impact = compute_population_impact(db, area=area, category=category)
-    vulnerability = compute_vulnerability(text)
+    vulnerability = compute_vulnerability(text, flags=vulnerability_flags)
     priority_score = compute_priority_score(
         urgency=urgency,
         population_impact=population_impact,

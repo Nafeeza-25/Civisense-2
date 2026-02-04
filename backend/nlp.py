@@ -230,10 +230,44 @@ class NLPEngine:
         else:
             print("⚠️ Model not found. Running in rule-based NLP mode")
 
+    def translate_input(self, text: str) -> str:
+        """
+        Simple dictionary-based translation/normalization for Hackathon demo.
+        Converts common Tanglish/Tamil keywords to English.
+        """
+        t = text.lower()
+        
+        # Tanglish / Tamil Keyword Map
+        replacements = {
+            "thanni": "water",
+            "tanni": "water",
+            "roadu": "road",
+            "theru": "street",
+            "current": "electricity",
+            "power": "electricity",
+            "velicham": "light",
+            "kudineer": "drinking water",
+            "kuppai": "garbage",
+            "saakadai": "drainage",
+            "mosam": "bad",
+            "udave": "help",
+            "veedu": "house",
+            "mazhai": "rain",
+            "vellam": "flood",
+        }
+        
+        for k, v in replacements.items():
+            t = t.replace(k, v)
+            
+        return t
+
     def predict_category(self, text: str) -> Tuple[str, float]:
+        # Pre-process / Translate
+        processed_text = self.translate_input(text)
+        
         # Use ML if available
         if self.engine:
-            result = self.engine.analyze_complaint(text)
+            result = self.engine.analyze_complaint(processed_text)
             return (
                 result["category"]["predicted"],
                 float(result["category"]["confidence"]),
@@ -242,7 +276,7 @@ class NLPEngine:
         # -------------------------
         # RULE-BASED FALLBACK
         # -------------------------
-        t = text.lower()
+        t = processed_text.lower()
 
         if "water" in t or "pipe" in t or "tanker" in t:
             return "Water", 0.6

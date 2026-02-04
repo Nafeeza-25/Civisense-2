@@ -9,20 +9,20 @@ interface ComplaintStepperProps {
 
 const ComplaintStepper = ({ currentStep, totalSteps, stepLabels }: ComplaintStepperProps) => {
   return (
-    <div className="w-full mb-8">
+    <div className="w-full">
       {/* Mobile: Simple progress bar */}
       <div className="md:hidden">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-foreground">
-            Step {currentStep} of {totalSteps}
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-sm font-semibold text-primary">
+            Step {currentStep} <span className="text-muted-foreground font-normal">of {totalSteps}</span>
           </span>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm font-medium text-foreground">
             {stepLabels[currentStep - 1]}
           </span>
         </div>
-        <div className="w-full bg-muted rounded-full h-2">
-          <div 
-            className="bg-primary h-2 rounded-full transition-all duration-300"
+        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div
+            className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
             style={{ width: `${(currentStep / totalSteps) * 100}%` }}
             role="progressbar"
             aria-valuenow={currentStep}
@@ -43,35 +43,37 @@ const ComplaintStepper = ({ currentStep, totalSteps, stepLabels }: ComplaintStep
             const isLast = stepNum === totalSteps;
 
             return (
-              <li 
+              <li
                 key={label}
                 className={cn(
                   "flex items-center",
                   !isLast && "flex-1"
                 )}
               >
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center relative group">
                   {/* Step circle */}
-                  <div 
+                  <div
                     className={cn(
-                      "flex items-center justify-center w-10 h-10 rounded-full border-2 font-semibold text-sm transition-colors",
-                      isCompleted && "bg-primary border-primary text-primary-foreground",
-                      isCurrent && "border-primary text-primary bg-background",
-                      !isCompleted && !isCurrent && "border-muted-foreground/30 text-muted-foreground bg-background"
+                      "flex items-center justify-center w-11 h-11 rounded-full border-2 font-bold text-sm transition-all duration-300 relative z-10",
+                      isCompleted && "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/20 scale-100",
+                      isCurrent && "border-primary text-primary bg-background ring-4 ring-primary/10 scale-110",
+                      !isCompleted && !isCurrent && "border-slate-200 text-slate-400 bg-background"
                     )}
                     aria-current={isCurrent ? "step" : undefined}
                   >
                     {isCompleted ? (
-                      <Check className="w-5 h-5" aria-hidden="true" />
+                      <Check className="w-6 h-6 animate-in fade-in zoom-in duration-300" aria-hidden="true" />
                     ) : (
                       stepNum
                     )}
                   </div>
+
                   {/* Step label */}
-                  <span 
+                  <span
                     className={cn(
-                      "mt-2 text-xs text-center max-w-[80px]",
-                      isCurrent ? "text-primary font-medium" : "text-muted-foreground"
+                      "mt-3 text-xs font-semibold uppercase tracking-wider text-center max-w-[100px] transition-colors duration-300",
+                      isCurrent ? "text-primary" : "text-muted-foreground",
+                      !isCurrent && !isCompleted && "text-slate-400"
                     )}
                   >
                     {label}
@@ -80,10 +82,10 @@ const ComplaintStepper = ({ currentStep, totalSteps, stepLabels }: ComplaintStep
 
                 {/* Connector line */}
                 {!isLast && (
-                  <div 
+                  <div
                     className={cn(
-                      "flex-1 h-0.5 mx-4",
-                      isCompleted ? "bg-primary" : "bg-muted"
+                      "flex-1 h-[2px] mx-4 -mt-6 transition-all duration-500",
+                      isCompleted ? "bg-primary" : "bg-slate-200 dark:bg-slate-700"
                     )}
                     aria-hidden="true"
                   />

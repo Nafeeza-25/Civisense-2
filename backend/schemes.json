@@ -1,34 +1,135 @@
 [
   {
     "name": "Public Distribution System (Ration Card)",
-    "categories": ["welfare", "food_security"],
-    "keywords": ["ration", "food", "pds", "rice", "wheat", "card"],
+    "categories": [
+      "welfare",
+      "food_security"
+    ],
+    "keywords": [
+      "ration",
+      "food",
+      "pds",
+      "rice",
+      "wheat",
+      "card"
+    ],
     "min_age": null,
     "max_age": null,
-    "income_groups": ["bpl", "low"]
+    "income_groups": [
+      "bpl",
+      "low"
+    ]
   },
   {
     "name": "Old Age Pension Scheme",
-    "categories": ["welfare"],
-    "keywords": ["pension", "elderly", "senior", "old age"],
+    "categories": [
+      "welfare"
+    ],
+    "keywords": [
+      "pension",
+      "elderly",
+      "senior",
+      "old age"
+    ],
     "min_age": 60,
     "max_age": null,
-    "income_groups": ["bpl", "low"]
+    "income_groups": [
+      "bpl",
+      "low"
+    ]
   },
   {
     "name": "Ayushman Bharat (Health Insurance)",
-    "categories": ["health", "healthcare"],
-    "keywords": ["hospital", "treatment", "doctor", "medical"],
+    "categories": [
+      "health",
+      "healthcare"
+    ],
+    "keywords": [
+      "hospital",
+      "treatment",
+      "doctor",
+      "medical"
+    ],
     "min_age": null,
     "max_age": null,
-    "income_groups": ["bpl", "low", "middle"]
+    "income_groups": [
+      "bpl",
+      "low",
+      "middle"
+    ]
   },
   {
     "name": "PMAY (Housing Assistance)",
-    "categories": ["housing"],
-    "keywords": ["house", "roof", "home", "homeless"],
+    "categories": [
+      "housing"
+    ],
+    "keywords": [
+      "house",
+      "roof",
+      "home",
+      "homeless"
+    ],
     "min_age": null,
     "max_age": null,
-    "income_groups": ["bpl", "low"]
+    "income_groups": [
+      "bpl",
+      "low"
+    ]
+  },
+  {
+    "name": "Dr. Muthulakshmi Reddy Maternity Assistance",
+    "categories": [
+      "health",
+      "welfare"
+    ],
+    "keywords": [
+      "pregnant",
+      "delivery",
+      "baby",
+      "maternity",
+      "mother"
+    ],
+    "min_age": 18,
+    "max_age": 40,
+    "income_groups": [
+      "bpl"
+    ]
+  },
+  {
+    "name": "Differently Abled Welfare Scheme",
+    "categories": [
+      "welfare",
+      "health"
+    ],
+    "keywords": [
+      "disabled",
+      "handicap",
+      "wheelchair",
+      "blind",
+      "deaf"
+    ],
+    "min_age": null,
+    "max_age": null,
+    "income_groups": null
+  },
+  {
+    "name": "Pre-Matric Scholarship for SC/ST",
+    "categories": [
+      "education",
+      "welfare"
+    ],
+    "keywords": [
+      "school",
+      "education",
+      "scholarship",
+      "fees",
+      "student"
+    ],
+    "min_age": 5,
+    "max_age": 25,
+    "income_groups": [
+      "bpl",
+      "low"
+    ]
   }
 ]
