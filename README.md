@@ -1,76 +1,93 @@
-**Civisense – Civic Intelligence System**
+**Civisense — Civic Grievance Intelligence System**
 
-AI-powered platform for prioritising citizen grievances and linking them to relevant welfare schemes.
+AI-powered platform that prioritizes citizen complaints and links them to welfare schemes.
 
 **Live Prototype**
 
-Frontend App:
+Frontend App
 https://civisenseapp.onrender.com/
 
-Backend API:
+Backend API
 https://civisense-2-api.onrender.com/docs
 
-GitHub Repository:
+GitHub
 https://github.com/Nafeeza-25/Civisense-2
 
 **Problem**
 
-Citizen grievances are currently:
+Government grievance systems are:
 
-manually processed
+manual
+
+slow
 
 not prioritised
 
 not linked to welfare schemes
 
-slow to resolve
-
-Authorities lack a system to analyse urgency, population impact, and vulnerable groups.
+Authorities lack data-driven decision support.
 
 **Solution**
 
-Civisense is an AI-driven civic intelligence system that:
+Civisense provides:
 
-Accepts citizen complaints
+digital complaint intake
 
-Classifies them using NLP
+NLP classification
 
-Calculates urgency and priority score
+urgency + impact scoring
 
-Detects population impact & vulnerability
+vulnerability detection
 
-Maps complaints to government welfare schemes
+welfare scheme mapping
 
-Displays data in an officer dashboard
+officer dashboard
 
-**How to Use the Prototype**
-**Citizen Flow**
+**How Judges Can Test Prototype**
+**Step 1 — Open frontend**
 
-Open the frontend link
+https://civisenseapp.onrender.com/
 
-Enter complaint description
+**Step 2 — Submit complaint**
 
-Select area/service type
+Enter:
 
-Submit complaint
+description
 
-System automatically:
+area
 
-classifies category
+service type
 
-calculates priority score
+urgency
 
-suggests welfare scheme
+**Step 3 — AI processing**
 
-**Officer Flow**
+System will:
 
-Open dashboard
+classify category
 
-View submitted complaints
+calculate priority
 
-See priority ranking
+detect population impact
 
-Update complaint status
+identify vulnerability
+
+suggest welfare scheme
+
+**Step 4 — Dashboard**
+
+Open:
+https://civisense-2-api.onrender.com/docs
+
+View:
+
+complaints
+
+priority ranking
+
+categories
+
+scheme mapping
 
 **Core Features**
 
@@ -78,15 +95,13 @@ NLP complaint classification
 
 Priority scoring engine
 
+Welfare scheme intelligence
+
 Population impact detection
 
-Vulnerability identification
+Vulnerability index
 
-Welfare scheme mapping
-
-Officer dashboard
-
-Status lifecycle tracking
+Officer workflow pipeline
 
 **Technical Stack**
 
@@ -104,7 +119,7 @@ FastAPI
 
 Python
 
-AI/NLP:
+AI:
 
 TF-IDF
 
@@ -114,37 +129,33 @@ Rule-based scoring
 
 Database:
 
-SQLite (prototype)
+SQLite
 
 Deployment:
 
-Render (backend)
-
-Render/Vercel (frontend)
-
-**Technical Workflow**
-
-Citizen → Frontend → FastAPI → NLP Engine → Priority Engine → Scheme Mapping → Database → Dashboard
+Render
 
 **Innovation**
 
-Hybrid ML + rule engine
+Hybrid ML + governance rules
 
 Explainable priority scoring
 
-Vulnerability detection
+Welfare eligibility engine
 
-Population impact estimation
+Feedback-ready AI
 
-Welfare scheme intelligence
+**Technical Feasibility**
 
-Feedback-ready architecture
+Prototype demonstrates:
 
-**Originality**
+✔ real complaint intake
+✔ NLP classification
+✔ scoring algorithm
+✔ scheme mapping
+✔ working backend APIs
 
-This solution is built specifically for the hackathon and not reused from any existing system.
-
-**External Libraries & Tools**
+**External Libraries Used**
 
 FastAPI
 
@@ -156,16 +167,6 @@ React
 
 Vite
 
-**Demo**
+**Original Work**
 
-The prototype demonstrates:
-
-working complaint submission
-
-real-time classification
-
-priority calculation
-
-scheme suggestion
-
-dashboard analytics
+This system was developed specifically for the HackElite hackathon.
