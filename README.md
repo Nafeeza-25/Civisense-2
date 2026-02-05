@@ -1,142 +1,171 @@
-Civisense — HackElite26 Prototype
+**Civisense – Civic Intelligence System**
 
+AI-powered platform for prioritising citizen grievances and linking them to relevant welfare schemes.
 
+**Live Prototype**
 
-Team: Civitech
+Frontend App:
+https://civisenseapp.onrender.com/
 
-Project: Citizen Grievance \& Welfare Intelligence System
+Backend API:
+https://civisense-2-api.onrender.com/docs
 
+GitHub Repository:
+https://github.com/Nafeeza-25/Civisense-2
 
+**Problem**
 
-What This Is
+Citizen grievances are currently:
 
+manually processed
 
+not prioritised
 
-Civisense is a full-stack prototype that uses AI to:
+not linked to welfare schemes
 
+slow to resolve
 
+Authorities lack a system to analyse urgency, population impact, and vulnerable groups.
 
-Classify citizen complaints
+**Solution**
 
+Civisense is an AI-driven civic intelligence system that:
 
+Accepts citizen complaints
 
-Calculate priority (urgency, population impact, vulnerability)
+Classifies them using NLP
 
+Calculates urgency and priority score
 
+Detects population impact & vulnerability
 
-Suggest relevant welfare schemes
+Maps complaints to government welfare schemes
 
+Displays data in an officer dashboard
 
+**How to Use the Prototype**
+**Citizen Flow**
 
-Show complaints in an officer dashboard
+Open the frontend link
 
+Enter complaint description
 
+Select area/service type
 
-Tech Stack
+Submit complaint
 
+System automatically:
 
+classifies category
 
-Frontend: React + Vite + Tailwind
+calculates priority score
 
+suggests welfare scheme
 
+**Officer Flow**
 
-Backend: FastAPI (Python)
+Open dashboard
 
+View submitted complaints
 
+See priority ranking
 
-AI: Scikit-learn (TF-IDF + ML model)
+Update complaint status
 
+**Core Features**
 
+NLP complaint classification
 
-DB: SQLite / SQLAlchemy
+Priority scoring engine
 
+Population impact detection
 
+Vulnerability identification
 
-How To Run (Local)
+Welfare scheme mapping
 
-1\. Clone Repo
+Officer dashboard
 
-git clone https://github.com/Nafeeza-25/civisense-hackathon.git
+Status lifecycle tracking
 
-cd civisense-hackathon
+**Technical Stack**
 
+Frontend:
 
+React
 
-2\. Backend
+Vite
 
-cd backend
+TypeScript
 
-python -m venv venv
+Backend:
 
-venv\\Scripts\\activate
+FastAPI
 
-pip install -r requirements.txt
+Python
 
-uvicorn main:app --reload
+AI/NLP:
 
+TF-IDF
 
+Logistic Regression
 
+Rule-based scoring
 
+Database:
 
-Open API Docs:
+SQLite (prototype)
 
-http://127.0.0.1:8000/docs
+Deployment:
 
+Render (backend)
 
+Render/Vercel (frontend)
 
-3\. Frontend (New Terminal)
+**Technical Workflow**
 
-cd frontend
+Citizen → Frontend → FastAPI → NLP Engine → Priority Engine → Scheme Mapping → Database → Dashboard
 
-npm install
+**Innovation**
 
-npm run dev
+Hybrid ML + rule engine
 
+Explainable priority scoring
 
+Vulnerability detection
 
+Population impact estimation
 
+Welfare scheme intelligence
 
-Open App:
+Feedback-ready architecture
 
-http://localhost:8080
+**Originality**
 
+This solution is built specifically for the hackathon and not reused from any existing system.
 
+**External Libraries & Tools**
 
-Demo Flow
+FastAPI
 
+scikit-learn
 
+SQLAlchemy
 
-Submit a complaint from the frontend
+React
 
+Vite
 
+**Demo**
 
-System predicts category \& priority
+The prototype demonstrates:
 
+working complaint submission
 
+real-time classification
 
-Open dashboard to view and update status
+priority calculation
 
+scheme suggestion
 
-
-Team Notes
-
-
-
-Don’t push directly to main
-
-
-
-Create your own branch:
-
-
-
-git checkout -b your-name-feature
-
-
-
-License
-
-
-
-Prototype for HackElite26 — Demo \& Educational Use Only
-
+dashboard analytics
