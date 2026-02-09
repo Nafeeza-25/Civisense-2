@@ -63,7 +63,13 @@ Consent Given: ${data.consent ? 'Yes' : 'No'}
     };
   },
 
-  getDashboard: async (): Promise<{ recent_high_priority: Complaint[], stats: DashboardStats }> => {
+  getDashboard: async (): Promise<{ 
+    recent_high_priority: Complaint[], 
+    stats: DashboardStats,
+    by_category: Record<string, number>,
+    by_status: Record<string, number>,
+    top_areas: Array<{ area: string; count: number }>
+  }> => {
     const response = await fetch(API_ENDPOINTS.dashboard);
 
     if (!response.ok) {
@@ -71,6 +77,7 @@ Consent Given: ${data.consent ? 'Yes' : 'No'}
     }
 
     const data = await response.json();
+    console.log('Dashboard API Response:', data); // Debug log
 
     // Helper to parse the formatted text back into objects
     const parseComplaintText = (text: string, id: string | number) => {
@@ -118,8 +125,11 @@ Consent Given: ${data.consent ? 'Yes' : 'No'}
         total: data.total_complaints,
         pending: (data.by_status['new'] || 0) + (data.by_status['assigned'] || 0) + (data.by_status['verified'] || 0) + (data.by_status['scheme_linked'] || 0),
         resolved: (data.by_status['resolved'] || 0) + (data.by_status['closed'] || 0),
-        highPriority: mappedComplaints.filter((c: any) => c.priorityScore >= 70).length // Estimate from recent or use backend metric if available
-      }
+        highPriority: mappedComplaints.filter((c: any) => c.priorityScore >= 70).length
+      },
+      by_category: data.by_category || {},
+      by_status: data.by_status || {},
+      top_areas: data.top_areas || []
     };
   },
 

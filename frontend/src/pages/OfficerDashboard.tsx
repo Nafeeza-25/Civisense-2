@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { DashboardCharts } from "@/components/DashboardCharts";
 import { LogOut, Shield, RefreshCw, AlertCircle } from 'lucide-react';
 import StatsCards from '@/components/dashboard/StatsCards';
 import Filters from '@/components/dashboard/Filters';
@@ -13,6 +14,9 @@ const OfficerDashboard = () => {
   const navigate = useNavigate();
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<DashboardStats>({ total: 0, pending: 0, resolved: 0, highPriority: 0 });
+  const [byCategory, setByCategory] = useState<Record<string, number>>({});
+  const [byStatus, setByStatus] = useState<Record<string, number>>({});
+  const [topAreas, setTopAreas] = useState<Array<{ area: string; count: number }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -38,6 +42,9 @@ const OfficerDashboard = () => {
       const data = await api.getDashboard();
       setComplaints(data.recent_high_priority || []);
       setStats(data.stats);
+      setByCategory(data.by_category || {});
+      setByStatus(data.by_status || {});
+      setTopAreas(data.top_areas || []);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
     } finally {
@@ -145,6 +152,12 @@ const OfficerDashboard = () => {
 
         {/* Stats */}
         <StatsCards stats={stats} />
+        {/* Dashboard Charts */}
+        <DashboardCharts 
+          byCategory={byCategory}
+          byStatus={byStatus}
+          topAreas={topAreas}
+        />
 
         {/* Complaints Section */}
         <Card className="glass-panel border-0 shadow-lg overflow-hidden">
