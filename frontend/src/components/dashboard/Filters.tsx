@@ -16,8 +16,17 @@ interface FiltersProps {
 }
 
 const categories = [
-  'All Categories', 'Water Supply', 'Road Maintenance', 'Healthcare',
-  'Housing', 'Social Welfare', 'Electricity', 'Sanitation', 'General'
+  'All Categories',
+  'Water',
+  'Roads',
+  'Electricity',
+  'Health',
+  'Welfare',
+  'Sanitation',
+  'Housing',
+  'Education',
+  'Food',
+  'Other'
 ];
 
 const areas = [

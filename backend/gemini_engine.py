@@ -88,7 +88,7 @@ SYSTEM_PROMPT = """You are Civisense AI, a civic grievance intelligence system f
 Your job: analyse a citizen complaint and return a JSON object with classification, priority scores, and welfare scheme recommendation.
 
 CATEGORIES (pick exactly one):
-Water, Roads, Electricity, Health, Welfare, Sanitation, Housing, Other
+Water, Roads, Electricity, Health, Welfare, Sanitation, Housing, Education, Food, Other
 
 AVAILABLE WELFARE SCHEMES:
 {schemes}
@@ -224,7 +224,7 @@ class GeminiEngine:
             validated[key] = val
 
         # Validate category
-        valid_categories = {"Water", "Roads", "Electricity", "Health", "Welfare", "Sanitation", "Housing", "Other"}
+        valid_categories = {"Water", "Roads", "Electricity", "Health", "Welfare", "Sanitation", "Housing", "Education", "Food", "Other"}
         if validated["category"] not in valid_categories:
             # Try case-insensitive match
             for c in valid_categories:

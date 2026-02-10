@@ -1,4 +1,4 @@
-import { Droplets, Construction, Heart, Home, Users, Zap, Trash2, HelpCircle } from 'lucide-react';
+import { Droplets, Construction, Heart, Home, Users, Zap, Trash2, HelpCircle, GraduationCap, ShoppingBasket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ComplaintFormData, ServiceType } from '@/lib/types';
 
@@ -9,11 +9,13 @@ interface StepServiceTypeProps {
 
 const serviceTypes: { value: ServiceType; label: string; icon: React.ElementType; description: string; color: string }[] = [
   { value: 'water', label: 'Water', icon: Droplets, description: 'Water supply issues', color: 'text-blue-500 bg-blue-50 border-blue-200 ring-blue-500/20' },
-  { value: 'road', label: 'Road', icon: Construction, description: 'Road & infrastructure', color: 'text-orange-500 bg-orange-50 border-orange-200 ring-orange-500/20' },
+  { value: 'road', label: 'Roads', icon: Construction, description: 'Road & infrastructure', color: 'text-orange-500 bg-orange-50 border-orange-200 ring-orange-500/20' },
   { value: 'health', label: 'Health', icon: Heart, description: 'Healthcare services', color: 'text-rose-500 bg-rose-50 border-rose-200 ring-rose-500/20' },
   { value: 'housing', label: 'Housing', icon: Home, description: 'Housing assistance', color: 'text-emerald-500 bg-emerald-50 border-emerald-200 ring-emerald-500/20' },
   { value: 'welfare', label: 'Welfare', icon: Users, description: 'Social welfare', color: 'text-violet-500 bg-violet-50 border-violet-200 ring-violet-500/20' },
-  { value: 'electricity', label: 'Electricity', icon: Zap, description: 'Power supply issues', color: 'text-amber-500 bg-amber-50 border-amber-200 ring-amber-500/20' },
+  { value: 'education', label: 'Education', icon: GraduationCap, description: 'Schools & scholarships', color: 'text-pink-500 bg-pink-50 border-pink-200 ring-pink-500/20' },
+  { value: 'food', label: 'Food', icon: ShoppingBasket, description: 'Ration & food security', color: 'text-amber-600 bg-amber-50 border-amber-200 ring-amber-500/20' },
+  { value: 'electricity', label: 'Electricity', icon: Zap, description: 'Power supply issues', color: 'text-yellow-500 bg-yellow-50 border-yellow-200 ring-yellow-500/20' },
   { value: 'sanitation', label: 'Sanitation', icon: Trash2, description: 'Cleanliness & waste', color: 'text-teal-500 bg-teal-50 border-teal-200 ring-teal-500/20' },
   { value: 'other', label: 'Other', icon: HelpCircle, description: 'Other services', color: 'text-slate-500 bg-slate-50 border-slate-200 ring-slate-500/20' },
 ];

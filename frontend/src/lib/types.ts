@@ -8,6 +8,8 @@ export type ServiceType =
   | 'welfare'
   | 'electricity'
   | 'sanitation'
+  | 'education'
+  | 'food'
   | 'other';
 
 export type UrgencyLevel = 'low' | 'medium' | 'high';
