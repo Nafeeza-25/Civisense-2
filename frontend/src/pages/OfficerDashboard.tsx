@@ -153,7 +153,7 @@ const OfficerDashboard = () => {
         {/* Stats */}
         <StatsCards stats={stats} />
         {/* Dashboard Charts */}
-        <DashboardCharts 
+        <DashboardCharts
           byCategory={byCategory}
           byStatus={byStatus}
           topAreas={topAreas}
@@ -194,15 +194,6 @@ const OfficerDashboard = () => {
               complaints={filteredComplaints}
               onStatusChange={handleStatusChange}
             />
-
-            {/* Results count */}
-            <div className="flex items-center justify-between text-sm text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-4">
-              <p>Showing {filteredComplaints.length} of {complaints.length} complaints</p>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled className="h-8 text-xs">Previous</Button>
-                <Button variant="outline" size="sm" disabled className="h-8 text-xs">Next</Button>
-              </div>
-            </div>
           </div>
         </Card>
       </main>

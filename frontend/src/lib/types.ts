@@ -1,23 +1,23 @@
 // Civisense Type Definitions
 
-export type ServiceType = 
-  | 'water' 
-  | 'road' 
-  | 'health' 
-  | 'housing' 
-  | 'welfare' 
-  | 'electricity' 
-  | 'sanitation' 
+export type ServiceType =
+  | 'water'
+  | 'road'
+  | 'health'
+  | 'housing'
+  | 'welfare'
+  | 'electricity'
+  | 'sanitation'
   | 'other';
 
 export type UrgencyLevel = 'low' | 'medium' | 'high';
 
-export type ComplaintStatus = 
-  | 'New' 
-  | 'Verified' 
-  | 'Scheme Linked' 
-  | 'Assigned' 
-  | 'Resolved' 
+export type ComplaintStatus =
+  | 'New'
+  | 'Verified'
+  | 'Scheme Linked'
+  | 'Assigned'
+  | 'Resolved'
   | 'Closed';
 
 export interface VulnerabilityInfo {
@@ -69,6 +69,12 @@ export interface Complaint {
     email: string;
   };
   vulnerability: VulnerabilityInfo;
+  // AI Metrics
+  confidence?: number;
+  urgencyScore?: number;
+  impactScore?: number;
+  vulnerabilityScore?: number;
+  explanation?: string; // Derived explanation text
 }
 
 export interface DashboardStats {

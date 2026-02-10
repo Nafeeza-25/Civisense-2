@@ -269,7 +269,7 @@ def get_dashboard(db: Session = Depends(get_db)) -> DashboardMetric:
     recent_high_priority = (
         db.query(Complaint)
         .order_by(Complaint.priority_score.desc(), Complaint.timestamp.desc())
-        .limit(10)
+        .limit(50)
         .all()
     )
 
@@ -282,6 +282,12 @@ def get_dashboard(db: Session = Depends(get_db)) -> DashboardMetric:
             "priority_score": c.priority_score,
             "status": c.status,
             "timestamp": c.timestamp,
+            # NEW fields for dashboard detail view
+            "scheme": c.scheme,
+            "confidence": c.confidence,
+            "urgency": c.urgency,
+            "population_impact": c.population_impact,
+            "vulnerability": c.vulnerability,
         }
         for c in recent_high_priority
     ]

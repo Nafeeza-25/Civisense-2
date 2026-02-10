@@ -63,8 +63,8 @@ Consent Given: ${data.consent ? 'Yes' : 'No'}
     };
   },
 
-  getDashboard: async (): Promise<{ 
-    recent_high_priority: Complaint[], 
+  getDashboard: async (): Promise<{
+    recent_high_priority: Complaint[],
     stats: DashboardStats,
     by_category: Record<string, number>,
     by_status: Record<string, number>,
@@ -80,42 +80,71 @@ Consent Given: ${data.consent ? 'Yes' : 'No'}
     console.log('Dashboard API Response:', data); // Debug log
 
     // Helper to parse the formatted text back into objects
-    const parseComplaintText = (text: string, id: string | number) => {
+    const parseComplaintText = (text: string) => {
       const parts = text.split('--- Additional Details ---');
       const description = parts[0].trim();
       let contactName = 'Anonymous';
+      let phone = '';
+      let email = '';
+      let vulnerability = {
+        seniorCitizen: false,
+        lowIncome: false,
+        disability: false
+      };
 
       if (parts[1]) {
-        const nameMatch = parts[1].match(/Contact Name: (.*)/);
+        const details = parts[1];
+
+        const nameMatch = details.match(/Contact Name: (.*)/);
         if (nameMatch) contactName = nameMatch[1].trim();
+
+        const phoneMatch = details.match(/Phone: (.*)/);
+        if (phoneMatch) phone = phoneMatch[1].trim();
+
+        const emailMatch = details.match(/Email: (.*)/);
+        if (emailMatch) email = emailMatch[1].trim();
+
+        // Vulnerability parsing
+        vulnerability.seniorCitizen = details.includes('Senior Citizen: Yes');
+        vulnerability.lowIncome = details.includes('Low Income: Yes');
+        vulnerability.disability = details.includes('Disability: Yes');
       }
 
-      return { description, contactName };
+      return { description, contactName, phone, email, vulnerability };
     };
 
     // Map the complaints
     const mappedComplaints = data.recent_high_priority.map((c: any) => {
-      const { description, contactName } = parseComplaintText(c.text, c.id);
+      const { description, contactName, phone, email, vulnerability } = parseComplaintText(c.text);
+
+      // Determine priority label from score
+      const priorityLabel = (c.priority_score >= 0.7) ? 'high' :
+        (c.priority_score >= 0.4) ? 'medium' : 'low';
+
+      // Construct explanation summary
+      const explanation = `Priority Score: ${Math.round(c.priority_score * 100)}/100. Breakdown: Urgency (${c.urgency?.toFixed(2) || 0}), Impact (${c.population_impact?.toFixed(2) || 0}), Vulnerability (${c.vulnerability?.toFixed(2) || 0}).`;
 
       return {
         id: c.id.toString(),
         description: description,
         category: c.category || 'Uncategorized',
-        priority: 'medium', // Default fallback
-        scheme: 'Pending',
+        priority: priorityLabel,
+        scheme: c.scheme || 'Pending',
         area: c.area || 'Unknown',
         status: c.status,
         timestamp: c.timestamp,
         contact: {
           name: contactName,
-          phone: '',
-          email: ''
+          phone: phone || 'Not provided',
+          email: email || 'Not provided'
         },
-        vulnerability: {
-          seniorCitizen: false,
-          lowIncome: false,
-          disability: false
-        }
+        vulnerability: vulnerability,
+        // AI Metrics
+        confidence: c.confidence,
+        urgencyScore: c.urgency,
+        impactScore: c.population_impact,
+        vulnerabilityScore: c.vulnerability,
+        explanation: explanation
       };
     });
 
