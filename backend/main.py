@@ -97,44 +97,124 @@ def on_startup() -> None:
 
 @app.post("/complaint", response_model=ComplaintOut)
 def create_complaint(payload: ComplaintIn, db: Session = Depends(get_db)) -> ComplaintOut:
-    # 0) Pre-process / Translate Text
-    # This handles "Tanglish" (e.g., "thanni illai" -> "water illai")
-    # so keywords work in priority and scheme engines too.
-    processed_text = nlp_engine.translate_input(payload.text)
+    # =====================================================
+    # STRATEGY: Try Gemini first (unified AI), fallback to
+    # existing sklearn + rules pipeline if Gemini fails.
+    # =====================================================
 
-    # 1) NLP engine (operates on translated text)
-    category, confidence = nlp_engine.predict_category(processed_text)
-
-    # 2-4) Priority pipeline
-    urgency, population_impact, vulnerability, priority_score = evaluate_complaint(
-        db=db,
-        text=processed_text,  # Use processed text for keyword matching
+    gemini_result = nlp_engine.analyze_with_gemini(
+        text=payload.text,
         area=payload.area,
-        category=category,
-        confidence=confidence,
         vulnerability_flags=payload.vulnerability,
     )
 
-    # 5) Welfare scheme engine
-    # Map vulnerability flags to metadata for scheme engine
-    # Scheme engine expects: age, income_group, etc.
-    metadata = {}
-    if payload.vulnerability:
-        if payload.vulnerability.get("seniorCitizen"):
-            metadata["age"] = 70  # Proxy age > 60
-        if payload.vulnerability.get("lowIncome"):
-            metadata["income_group"] = "bpl"
-    
-    scheme, scheme_reason = map_scheme(
-        category=category, 
-        text=processed_text,  # Use processed text
-        area=payload.area,
-        metadata=metadata
-    )
+    if gemini_result:
+        # ----- GEMINI PATH (primary) -----
+        category = gemini_result["category"]
+        confidence = gemini_result["confidence"]
+        urgency = gemini_result["urgency_score"]
+        population_impact = gemini_result["population_impact"]
+        vulnerability = gemini_result["vulnerability_score"]
+        priority_score = gemini_result["priority_score"] / 100.0  # normalise to 0-1
+        scheme = gemini_result["recommended_scheme"]
+        scheme_reason = gemini_result["scheme_reason"]
 
-    # 6) Persist complaint (Store ORIGINAL text for record, but processed/analyzed results)
+        explanation = {
+            "category": {
+                "value": category,
+                "confidence": confidence,
+                "notes": f"Classified by Gemini AI. {gemini_result.get('summary', '')}",
+            },
+            "urgency": {
+                "value": urgency,
+                "notes": gemini_result.get("urgency_reason", "Assessed by Gemini AI."),
+            },
+            "population_impact": {
+                "value": population_impact,
+                "notes": gemini_result.get("population_reason", "Assessed by Gemini AI."),
+            },
+            "vulnerability": {
+                "value": vulnerability,
+                "notes": gemini_result.get("vulnerability_reason", "Assessed by Gemini AI."),
+            },
+            "priority_score": {
+                "value": priority_score,
+                "notes": f"Priority {gemini_result['priority_score']}/100 — weighted by urgency, impact, and vulnerability.",
+            },
+            "scheme": {
+                "value": scheme,
+                "notes": scheme_reason,
+            },
+        }
+
+        # Use Gemini's translation if available, otherwise original text
+        stored_text = payload.text
+
+    else:
+        # ----- FALLBACK PATH (sklearn + rules) -----
+        processed_text = nlp_engine.translate_input(payload.text)
+
+        # 1) NLP classification
+        category, confidence = nlp_engine.predict_category(processed_text)
+
+        # 2-4) Priority pipeline
+        urgency, population_impact, vulnerability, priority_score = evaluate_complaint(
+            db=db,
+            text=processed_text,
+            area=payload.area,
+            category=category,
+            confidence=confidence,
+            vulnerability_flags=payload.vulnerability,
+        )
+
+        # 5) Welfare scheme engine
+        metadata = {}
+        if payload.vulnerability:
+            if payload.vulnerability.get("seniorCitizen"):
+                metadata["age"] = 70
+            if payload.vulnerability.get("lowIncome"):
+                metadata["income_group"] = "bpl"
+
+        scheme, scheme_reason = map_scheme(
+            category=category,
+            text=processed_text,
+            area=payload.area,
+            metadata=metadata,
+        )
+
+        stored_text = payload.text
+
+        explanation = {
+            "category": {
+                "value": category,
+                "confidence": confidence,
+                "notes": "Predicted by NLP engine (model or rules).",
+            },
+            "urgency": {
+                "value": urgency,
+                "notes": "Derived from keywords indicating emergencies or time sensitivity.",
+            },
+            "population_impact": {
+                "value": population_impact,
+                "notes": "Estimated from number of similar complaints in the same area and category.",
+            },
+            "vulnerability": {
+                "value": vulnerability,
+                "notes": "Higher if vulnerable groups are involved (Senior Citizen, BPL, Disability).",
+            },
+            "priority_score": {
+                "value": priority_score,
+                "notes": "Weighted combination of urgency, impact, vulnerability and model confidence.",
+            },
+            "scheme": {
+                "value": scheme,
+                "notes": scheme_reason,
+            },
+        }
+
+    # 6) Persist complaint
     complaint = Complaint(
-        text=payload.text,  # Store original user input
+        text=stored_text,
         area=payload.area,
         category=category,
         confidence=confidence,
@@ -148,34 +228,6 @@ def create_complaint(payload: ComplaintIn, db: Session = Depends(get_db)) -> Com
     db.add(complaint)
     db.commit()
     db.refresh(complaint)
-
-    explanation = {
-        "category": {
-            "value": category,
-            "confidence": confidence,
-            "notes": "Predicted by NLP engine (model or rules).",
-        },
-        "urgency": {
-            "value": urgency,
-            "notes": "Derived from keywords indicating emergencies or time sensitivity.",
-        },
-        "population_impact": {
-            "value": population_impact,
-            "notes": "Estimated from number of similar complaints in the same area and category.",
-        },
-        "vulnerability": {
-            "value": vulnerability,
-            "notes": "Higher if vulnerable groups are involved (Senior Citizen, BPL, Disability).",
-        },
-        "priority_score": {
-            "value": priority_score,
-            "notes": "Weighted combination of urgency, impact, vulnerability and model confidence.",
-        },
-        "scheme": {
-            "value": scheme,
-            "notes": scheme_reason,
-        },
-    }
 
     return ComplaintOut(
         id=complaint.id,

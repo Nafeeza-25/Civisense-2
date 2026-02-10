@@ -6,7 +6,7 @@ import Layout from '@/components/layout/Layout';
 import ComplaintStepper from '@/components/complaint/ComplaintStepper';
 import StepDescribeIssue from '@/components/complaint/StepDescribeIssue';
 import StepServiceType from '@/components/complaint/StepServiceType';
-import StepUrgency from '@/components/complaint/StepUrgency';
+// import StepUrgency from '@/components/complaint/StepUrgency'; // AI determines urgency now
 import StepVulnerability from '@/components/complaint/StepVulnerability';
 import StepContact from '@/components/complaint/StepContact';
 import SubmissionResult from '@/components/complaint/SubmissionResult';
@@ -17,7 +17,7 @@ const initialFormData: ComplaintFormData = {
   description: '',
   area: '',
   serviceType: 'other',
-  urgency: 'medium',
+  urgency: 'medium', // Default value, AI will override/ignore
   vulnerability: {
     seniorCitizen: false,
     lowIncome: false,
@@ -29,7 +29,7 @@ const initialFormData: ComplaintFormData = {
   consent: false
 };
 
-const stepLabels = ['Describe', 'Category', 'Urgency', 'Vulnerability', 'Contact'];
+const stepLabels = ['Describe', 'Category', 'Vulnerability', 'Contact'];
 
 const CitizenComplaint = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -52,12 +52,13 @@ const CitizenComplaint = () => {
       case 1:
         return formData.description.trim().length > 10 && formData.area !== '';
       case 2:
+        // Service Type / Category
         return formData.serviceType !== undefined;
       case 3:
-        return formData.urgency !== undefined;
+        // Vulnerability (Optional)
+        return true;
       case 4:
-        return true; // Vulnerability is optional
-      case 5:
+        // Contact & Consent
         return (
           formData.name.trim().length > 0 &&
           formData.phone.length === 10 &&
@@ -70,7 +71,7 @@ const CitizenComplaint = () => {
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 5));
+      setCurrentStep(prev => Math.min(prev + 1, 4));
     }
   };
 
@@ -79,7 +80,7 @@ const CitizenComplaint = () => {
   };
 
   const handleSubmit = async () => {
-    if (!validateStep(5)) {
+    if (!validateStep(4)) {
       setError('Please fill in all required fields and accept the consent checkbox.');
       return;
     }
@@ -115,10 +116,9 @@ const CitizenComplaint = () => {
             case 2:
               return <StepServiceType data={formData} updateData={updateFormData} />;
             case 3:
-              return <StepUrgency data={formData} updateData={updateFormData} />;
-            case 4:
+              // Urgency step removed - AI handles it
               return <StepVulnerability data={formData} updateData={updateFormData} />;
-            case 5:
+            case 4:
               return <StepContact data={formData} updateData={updateFormData} />;
             default:
               return null;
@@ -161,7 +161,7 @@ const CitizenComplaint = () => {
           <div className="glass-panel rounded-2xl p-6 shadow-sm">
             <ComplaintStepper
               currentStep={currentStep}
-              totalSteps={5}
+              totalSteps={4}
               stepLabels={stepLabels}
             />
           </div>
@@ -196,7 +196,7 @@ const CitizenComplaint = () => {
                     Back
                   </Button>
 
-                  {currentStep < 5 ? (
+                  {currentStep < 4 ? (
                     <Button
                       onClick={handleNext}
                       disabled={!validateStep(currentStep)}
@@ -209,7 +209,7 @@ const CitizenComplaint = () => {
                   ) : (
                     <Button
                       onClick={handleSubmit}
-                      disabled={!validateStep(5) || isSubmitting}
+                      disabled={!validateStep(4) || isSubmitting}
                       className="gap-2 px-8 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300"
                       size="lg"
                     >
@@ -232,8 +232,8 @@ const CitizenComplaint = () => {
             <div className="absolute -z-10 bottom-0 -right-12 w-64 h-64 bg-secondary/20 rounded-full blur-[100px]" />
           </div>
 
-          {/* Skip vulnerability step hint */}
-          {currentStep === 4 && (
+          {/* Hint for vulnerability step (now step 3) */}
+          {currentStep === 3 && (
             <p className="text-center text-sm text-slate-400 mt-4 animate-in">
               This step is completely optional. Your privacy is paramount.
             </p>

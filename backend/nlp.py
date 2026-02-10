@@ -218,18 +218,55 @@ class CivisenseNLP:
 
 class NLPEngine:
     def __init__(self, model_path: str = "model.joblib"):
+        # --- Gemini (primary) ---
+        self.gemini = None
+        try:
+            from gemini_engine import GeminiEngine
+            self.gemini = GeminiEngine()
+        except Exception as e:
+            print(f"⚠️ Gemini engine not available, will use fallback: {e}")
+
+        # --- sklearn ML model (secondary) ---
         self.engine = None
 
         if os.path.exists(model_path):
             try:
                 model_bundle = joblib.load(model_path)
                 self.engine = CivisenseNLP(model_bundle)
-                print("✅ ML model loaded successfully")
+                print("✅ ML model loaded successfully (fallback)")
             except Exception as e:
                 print("⚠️ Model load failed. Falling back to rule-based NLP:", e)
         else:
             print("⚠️ Model not found. Running in rule-based NLP mode")
 
+    # --------------------------------------------------
+    # NEW: Full Gemini analysis (used by main.py)
+    # --------------------------------------------------
+    def analyze_with_gemini(
+        self,
+        text: str,
+        area: str = None,
+        vulnerability_flags: dict = None,
+    ) -> Dict[str, Any] | None:
+        """
+        Attempt a full analysis via Gemini API.
+        Returns the Gemini result dict on success, or None on failure.
+        """
+        if not self.gemini:
+            return None
+        try:
+            return self.gemini.analyze_complaint(
+                text=text,
+                area=area,
+                vulnerability_flags=vulnerability_flags,
+            )
+        except Exception as e:
+            print(f"⚠️ Gemini analysis failed, will use fallback: {e}")
+            return None
+
+    # --------------------------------------------------
+    # Translation (kept for fallback pipeline)
+    # --------------------------------------------------
     def translate_input(self, text: str) -> str:
         """
         Simple dictionary-based translation/normalization for Hackathon demo.
@@ -261,6 +298,9 @@ class NLPEngine:
             
         return t
 
+    # --------------------------------------------------
+    # Category prediction (Gemini → ML → Rules)
+    # --------------------------------------------------
     def predict_category(self, text: str) -> Tuple[str, float]:
         # Pre-process / Translate
         processed_text = self.translate_input(text)
