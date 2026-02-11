@@ -87,7 +87,7 @@ Officers can correct misclassifications → System learns and improves
 
 ### Backend
 - **Framework**: FastAPI (Python 3.11)
-- **Database**: SQLite (production-ready for PostgreSQL migration)
+- **Database**: Render Database (PostgreSQL)
 - **ORM**: SQLAlchemy
 - **API Docs**: Automatic Swagger/OpenAPI
 
@@ -293,7 +293,7 @@ Submit officer feedback for AI improvement
 |-------|-----------|
 | Frontend | React, TypeScript, Vite, Tailwind CSS |
 | Backend | FastAPI, Python 3.11, SQLAlchemy |
-| Database | SQLite → PostgreSQL (production) |
+| Database | Render Database (PostgreSQL) |
 | ML/NLP | scikit-learn, TF-IDF, Logistic Regression |
 | Deployment | Render (Frontend + Backend) |
 | Version Control | Git, GitHub |
